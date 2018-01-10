@@ -1,16 +1,17 @@
+/* with fix from 599b07358b9972dfcf676972a305564717239be5 */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module unless amdModuleId is set
     define('textAngular', ["rangy","rangy/lib/rangy-selectionsaverestore"], function (a0,b1) {
       return (root['textAngular.name'] = factory(a0,b1));
     });
-  } else if (typeof exports === 'object') {
+  } else if (typeof module === 'object' && module.exports) {
     // Node. Does not work with strict CommonJS, but
     // only CommonJS-like environments that support module.exports,
     // like Node.
     module.exports = factory(require("rangy"),require("rangy/lib/rangy-selectionsaverestore"));
   } else {
-    root['textAngular'] = factory(rangy);
+    root['textAngular'] = factory(root["rangy"]);
   }
 }(this, function (rangy) {
 
@@ -1753,11 +1754,14 @@ angular.module('textAngular.DOM', ['textAngular.factories'])
                 var __h, _innerNode;
                 /* istanbul ignore next */
                 if (selectedElement.tagName !== undefined) {
+                    _nodes = taSelection.getOnlySelectedElements();
                     if (selectedElement.tagName.toLowerCase() === 'div' &&
                         /taTextElement.+/.test(selectedElement.id) &&
                         ourSelection && ourSelection.start &&
                         ourSelection.start.offset === 1 &&
-                        ourSelection.end.offset === 1) {
+                        ourSelection.end.offset === 1 &&
+                        // only if all nodes of the whole container were selected
+                        (_nodes.length === 0 || (_nodes.length === selectedElement.childNodes.length))) {
                         // opps we are actually selecting the whole container!
                         //console.log('selecting whole container!');
                         __h = selectedElement.innerHTML;
