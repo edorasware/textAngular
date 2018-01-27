@@ -1,4 +1,3 @@
-/* with fix from 599b07358b9972dfcf676972a305564717239be5 */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module unless amdModuleId is set
@@ -1862,6 +1861,15 @@ angular.module('textAngular.DOM', ['textAngular.factories'])
                 //console.log('PPPPPPPPPPPPP', tagName, selfTag, selectedElements, tagName.match(BLOCKELEMENTS), $selected.hasClass('ta-bind'), $selected.parent()[0].tagName);
                 if (selectedElements.length>1 && (tagName === 'ol' ||  tagName === 'ul' )) {
                     return listElementsToSelfTag($selected, selectedElements, selfTag, selfTag===tagName, taDefaultWrap);
+                } else if (tagName === 'li' && $selected.parent().children().length > 1) {
+                    // if list has more than one elements and only one of them is selected
+                    var parent = $selected.parent();
+                    if (parent.length > 0 && parent[0].tagName) {
+                        var parentTagName = parent[0].tagName.toLowerCase();
+                        if (parentTagName === 'ol' || parentTagName === 'ul') {
+                            return listElementsToSelfTag(parent, [selectedElement], selfTag, parentTagName, taDefaultWrap);
+                        }
+                    }
                 }
                 if(tagName === selfTag){
                     // if all selected then we should remove the list
